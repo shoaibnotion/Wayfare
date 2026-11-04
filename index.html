@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wayfare – Holiday Planner</title>
+<meta name="theme-color" content="#073b32">
+<meta name="application-name" content="Wayfare">
+<meta name="description" content="Plan, organize and remember your holidays with Wayfare.">
+<link rel="icon" type="image/png" sizes="48x48" href="./icons/favicon-48.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="manifest" href="./manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f1;--card:#fff;--ink:#0c1a1d;--mute:#5f7478;--line:#dfe7e6;--acc:#0b6e78;--on:#fff;--soft:#e5efee;--gold:#c9962f;--red:#d6453d;--redsoft:#fdeceb;--sh:0 1px 1px rgba(8,30,34,.04),0 12px 28px -16px rgba(8,30,34,.28);--nav:rgba(255,255,255,.8);--serif:Fraunces,Georgia,serif;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#071316;--card:#0e2024;--ink:#eaf3f3;--mute:#86a2a6;--line:#1a3338;--acc:#47c4ce;--on:#04181c;--soft:#123037;--gold:#e3b24f;--red:#ff7b72;--redsoft:#3a1c1e;--nav:rgba(7,19,22,.82);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#071316;--card:#0e2024;--ink:#eaf3f3;--mute:#86a2a6;--line:#1a3338;--acc:#47c4ce;--on:#04181c;--soft:#123037;--gold:#e3b24f;--red:#ff7b72;--redsoft:#3a1c1e;--nav:rgba(7,19,22,.82);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 15px/1.5 Inter,-apple-system,system-ui,sans-serif}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:6}
+button,input,select,textarea{font:inherit;color:inherit}button{border:0;background:none;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+#app{max-width:540px;margin:0 auto;padding:18px 18px 120px}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;margin:8px 0 22px}
+.hd small{color:var(--mute);font-weight:500;font-size:13px}.hd h1{font:600 34px/1.1 var(--serif);letter-spacing:-.02em;margin-top:2px}
+.ib{width:42px;height:42px;border-radius:50%;background:var(--card);box-shadow:var(--sh);display:grid;place-items:center;color:var(--acc);flex:none}
+h2{font:600 21px/1.2 var(--serif);letter-spacing:-.01em;margin:28px 2px 10px}
+.sub,.sm{color:var(--mute);font-size:13px}
+.list{background:var(--card);border-radius:20px;box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
+.li{display:flex;align-items:center;gap:13px;padding:14px 16px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.li:last-child{border:0}.li .t{flex:1;min-width:0}.li .t b{display:block;font-weight:600}.t>.sub{display:block}
+.ico{width:36px;height:36px;border-radius:11px;background:var(--soft);color:var(--acc);display:grid;place-items:center;flex:none}
+.li>svg:last-child{color:var(--mute);flex:none}
+.ticket{background:linear-gradient(150deg,#118793,#06343c);color:#fff;border-radius:28px;box-shadow:0 22px 40px -22px rgba(6,52,60,.7);overflow:hidden}
+.tk{padding:24px 24px 22px}.tk .k{font-size:13px;color:#f0cf85;font-weight:600}.tk h2{font:600 32px/1.1 var(--serif);margin:6px 0 6px;color:#fff;letter-spacing:-.02em}.tk p{opacity:.82;font-size:14px}
+.cut{position:relative;border-top:2px dashed rgba(255,255,255,.28)}
+.cut:before,.cut:after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--bg)}.cut:before{left:-12px}.cut:after{right:-12px}
+.stub{display:flex;align-items:center;gap:20px;padding:18px 24px 22px}
+.stub .n{font:600 50px/1 var(--serif);letter-spacing:-.03em;display:block}.stub .u{font-size:12px;opacity:.8}
+.stub .g{flex:1}.stub .g span{font-size:13px;opacity:.85}
+.bar{height:6px;background:rgba(255,255,255,.2);border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:#f0cf85;border-radius:9px}
+/* home carousel */
+.car{display:flex;align-items:flex-start;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:2px 2px 26px;margin:0 -2px -14px;-webkit-overflow-scrolling:touch}
+.car::-webkit-scrollbar,.sl::-webkit-scrollbar{display:none}
+.car .ticket{flex:0 0 100%;scroll-snap-align:start;cursor:pointer;min-width:0}
+.car.multi .ticket{flex-basis:88%}
+.sdots{display:flex;gap:6px;justify-content:center;margin:2px 0 8px}.sdots i{width:6px;height:6px;border-radius:9px;background:var(--line);transition:.2s}.sdots i.on{width:18px;background:var(--acc)}
+.clw{border-top:1px solid rgba(255,255,255,.18);padding:14px 18px 18px}
+.clh{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.92;margin-bottom:10px}
+.rp{background:#ff5d52;color:#fff;border-radius:99px;padding:3px 10px;font-size:11px}
+.cl{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.09);margin-bottom:6px;font-size:14px}
+.cl.imp{background:rgba(255,93,82,.24);box-shadow:inset 3px 0 0 #ff5d52}
+.cl span{flex:1;min-width:0}.cl em{font-style:normal;font-size:10px;font-weight:700;color:#ffc0ba;text-transform:uppercase;letter-spacing:.04em}
+.cb{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.55);flex:none;position:relative}.cb:after{content:"";position:absolute;inset:-9px}
+.cl.imp .cb{border-color:#ff8a82}
+.more{font-size:12px;opacity:.75;margin-top:4px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.tile{background:var(--card);border-radius:18px;padding:14px 4px 11px;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12px;font-weight:600;box-shadow:var(--sh)}
+.tile span{color:var(--acc)}
+.tour-link{width:100%;margin-top:14px;background:var(--card);border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left;box-shadow:var(--sh);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent)}
+.tour-link .ico{background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold)}.tour-link .t{flex:1}.tour-link b{display:block;font-weight:600}.tour-link span.s{font-size:13px;color:var(--mute)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--acc);color:var(--on);font-weight:600;border-radius:15px;padding:15px 18px;width:100%}
+.btn.soft{background:var(--soft);color:var(--ink)}.btn.sm{width:auto;padding:9px 16px;font-size:13px;border-radius:11px}.btn.red{background:transparent;color:var(--red)}
+.f{display:block;padding:12px 16px;border-bottom:1px solid var(--line)}.f:last-child{border:0}
+.f span{display:block;font-size:12px;color:var(--mute);font-weight:600}
+.f input,.f select,.f textarea{width:100%;border:0;background:none;padding:3px 0;outline:0;font-weight:500}
+.seg{display:flex;background:var(--soft);border-radius:13px;padding:3px;gap:3px}.seg button{flex:1;padding:9px;border-radius:10px;font-weight:600;font-size:13px;color:var(--mute)}.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+.seg button.on.red{background:var(--red);color:#fff}
+.cal{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--sh);margin-bottom:14px}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.ch h3{font:600 19px var(--serif)}
+.ch button{width:36px;height:36px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px}.w{text-align:center;font-size:12px;color:var(--mute);font-weight:600;padding-bottom:6px}
+.day{aspect-ratio:1;display:grid;place-items:center;font-weight:600;position:relative;margin:0 auto;width:100%;max-width:46px;border-radius:50%}
+.day.in{background:var(--soft);border-radius:0}.day.s,.day.e{background:var(--acc);color:var(--on)}
+.day.today{box-shadow:inset 0 0 0 2px var(--gold)}.day.hol:after{content:"";position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.prog{display:flex;align-items:center;gap:16px;background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--sh);margin-bottom:14px}
+.ring{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--acc) calc(var(--p)*1%),var(--soft) 0)}.ring span{width:54px;height:54px;border-radius:50%;background:var(--card);display:grid;place-items:center;font:600 16px var(--serif)}
+.cat{font-size:13px;font-weight:600;color:var(--mute);padding:14px 16px 4px}
+.ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:transparent;flex:none}
+.done .ck,.ck.fill{background:var(--acc);border-color:var(--acc);color:var(--on)}.done .t{text-decoration:line-through;color:var(--mute)}
+.li.imp{background:var(--redsoft);box-shadow:inset 4px 0 0 var(--red)}
+.imp .ck{border-color:var(--red)}.imp.done .ck,.imp .ck.fill{background:var(--red);border-color:var(--red);color:#fff}
+.secH{display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin:18px 4px 8px}
+.secH:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc)}.secH.red{color:var(--red)}.secH.red:before{background:var(--red)}
+.rd{color:var(--red);font-weight:700}
+.x{color:var(--mute);padding:6px;font-size:16px}
+.mem{columns:2;column-gap:10px}.mem button{display:block;width:100%;margin-bottom:10px;border-radius:18px;overflow:hidden;position:relative;break-inside:avoid;background:var(--soft)}
+.mem img{width:100%;display:block}.mem span{position:absolute;inset:auto 0 0;padding:28px 11px 10px;color:#fff;font-size:12px;font-weight:600;text-align:left;background:linear-gradient(transparent,rgba(0,0,0,.72))}
+.sheet .mem img,.sheet .cov img{margin:0;border-radius:0}
+.mc{display:flex;align-items:center;gap:13px;padding:12px 14px;width:100%;text-align:left;background:var(--card);border-radius:20px;box-shadow:var(--sh);margin-bottom:12px}
+.cov{width:68px;height:68px;border-radius:16px;background:linear-gradient(150deg,#118793,#06343c);display:grid;place-items:center;color:#f0cf85;overflow:hidden;flex:none}.cov img{width:100%;height:100%;object-fit:cover}
+.mc .t{flex:1;min-width:0}.mc .t>*{display:block}.mc b{font-weight:600}.mc>svg{color:var(--mute);flex:none}
+.mm{display:flex!important;gap:6px;margin-top:6px;flex-wrap:wrap}.mm span{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--soft);color:var(--acc)}
+.empty{text-align:center;padding:34px 18px;color:var(--mute)}.empty b{display:block;font:600 18px var(--serif);color:var(--ink);margin-bottom:4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.chip{padding:7px 14px;border-radius:99px;background:var(--card);font-weight:600;font-size:13px;box-shadow:var(--sh)}.chip.on{background:var(--acc);color:var(--on)}
+.chp{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:99px;background:var(--soft);font-size:13px;font-weight:600}.chp svg{color:var(--acc)}
+.chp.imp{background:var(--redsoft);color:var(--red);box-shadow:inset 0 0 0 1.5px var(--red)}.chp.imp svg{color:var(--red)}.chp.mut{opacity:.7}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--nav);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+nav div{max-width:540px;margin:0 auto;display:flex}nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;font-size:11px;font-weight:600;color:var(--mute)}nav button.on{color:var(--acc)}
+.ov{position:fixed;inset:0;background:rgba(2,12,15,.55);z-index:10;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:min(540px,100%);border-radius:28px 28px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom,0px));max-height:92%;overflow:auto;animation:up .25s ease-out}
+.sheet:before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 14px}
+.sheet>img{width:100%;border-radius:18px;margin-bottom:12px}
+.mh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.sl{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:12px;margin-top:12px;scroll-behavior:auto}
+.slide{flex:0 0 100%;scroll-snap-align:start;max-height:56vh;overflow-y:auto;min-width:0}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.sum div{background:var(--card);border-radius:16px;padding:10px;text-align:center;box-shadow:var(--sh)}.sum b{display:block;font:600 22px var(--serif)}.sum span{font-size:11px;color:var(--mute);font-weight:600}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+.note{font-size:12px;color:var(--mute);text-align:center;margin-top:12px}
+.toast{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-weight:600;z-index:40;max-width:90%;box-shadow:var(--sh)}
+.tour{position:fixed;inset:0;z-index:30;background:linear-gradient(170deg,#118793,#04252b);color:#fff;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 28px calc(26px + env(safe-area-inset-bottom,0px))}
+.tour .sk{align-self:flex-end;color:rgba(255,255,255,.8);font-weight:600;padding:8px}
+.tour .mid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:380px;margin:0 auto}
+.tour .ic{width:116px;height:116px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(240,207,133,.5);display:grid;place-items:center;color:#f0cf85;margin-bottom:30px;animation:pop .35s ease-out}
+.tour h2{font-size:32px;color:#fff;margin:0 0 12px}.tour p{font-size:16px;opacity:.86;line-height:1.55}
+.dots{display:flex;gap:7px;justify-content:center;margin:0 0 20px}.dots i{width:7px;height:7px;border-radius:9px;background:rgba(255,255,255,.3);transition:.2s}.dots i.on{width:22px;background:#f0cf85}
+.tour .btn{background:#f0cf85;color:#2a1c00;max-width:380px;margin:0 auto}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+.row{display:flex;justify-content:space-between;align-items:flex-end}.row h2{margin-bottom:10px}.row .btn.sm{margin-bottom:10px}
+.plus{width:42px;height:42px;border-radius:50%;background:var(--acc);color:var(--on);display:grid;place-items:center;box-shadow:var(--sh);margin-bottom:8px;flex:none}
+.sg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}.sg button{padding:8px 13px 8px 10px;border-radius:99px;background:var(--card);box-shadow:var(--sh);font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center}.sg button svg{color:var(--acc)}
+.sg button.imp{box-shadow:inset 0 0 0 1.5px var(--red)}.sg button.imp svg{color:var(--red)}
+.im{font-style:normal;font-size:11px;font-weight:700;color:var(--red);margin-left:8px}
+.left{display:block;font-size:13px;margin-top:3px;color:var(--mute)}.left b{color:var(--ink);font-weight:600}
+.tg{margin-bottom:10px}.th{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 2px 8px}.th b{font:600 19px var(--serif);display:block}
+.pk{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:14px 16px;margin-bottom:14px}.pkh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin-bottom:10px}.cw{display:flex;flex-wrap:wrap;gap:8px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mute);margin:0 4px 6px}.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;background:var(--acc)}.legend i.r{background:var(--red)}
+.pc{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:14px 16px;margin-bottom:12px}
+.pch{display:flex;align-items:center;gap:10px;width:100%;text-align:left}.pch .t{flex:1;min-width:0}.pch .t b{display:block;font:600 18px var(--serif)}.pch>svg{color:var(--mute);flex:none}
+.pcs{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin:12px 0 7px;color:var(--mute)}.pcs b{color:var(--ink);font-weight:700}
+.pbar{height:6px;background:var(--soft);border-radius:9px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--acc);border-radius:9px}
+.pc.ok .pbar i{background:var(--gold)}.pca{margin-top:12px}
+.bk{display:inline-flex;align-items:center;gap:4px;color:var(--acc);font-weight:600;margin:-8px 0 14px;padding:6px 2px}.bk svg{transform:rotate(180deg)}
+.rng{background:linear-gradient(150deg,#118793,#06343c);color:#fff;border-radius:26px;padding:18px;box-shadow:0 22px 40px -22px rgba(6,52,60,.7);margin-bottom:14px}
+.rg{display:flex;align-items:stretch;gap:8px}
+.rt{flex:1;position:relative;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.16);border-radius:20px;padding:13px 14px;min-width:0;transition:.2s}
+.rt.act{border-color:#f0cf85;background:rgba(240,207,133,.15)}
+.rt small{display:block;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#f0cf85}
+.rt b{display:block;font:600 38px/1.05 var(--serif);letter-spacing:-.02em;margin-top:4px}
+.rt span{font-size:13px;opacity:.85}
+.rt input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.rmid{display:grid;place-items:center;color:#f0cf85;flex:none}
+.rsum{margin-top:14px;text-align:center;font-size:13px;font-weight:600;color:#f0cf85}
+.rsum em{font-style:normal;display:inline-block;background:rgba(240,207,133,.16);border-radius:99px;padding:5px 14px;color:#fff}
+.day.off{opacity:.3}
+@media (prefers-reduced-motion:reduce){.sheet,.tour .ic{animation:none}}
+</style></head><body>
+<div id="app"></div><nav id="nav"></nav>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LS={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},d(k){try{localStorage.removeItem(k)}catch(e){}}};
+const uid=()=>Math.random().toString(36).slice(2,10),iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const pd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)},fmt=(s,o)=>pd(s).toLocaleDateString(undefined,o||{day:'numeric',month:'short'}),today=iso(new Date()),days=(a,b)=>Math.round((pd(b)-pd(a))/864e5);
+const P={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>',bag:'<path d="M6 8h12l1 12H5zM9 8V6a3 3 0 0 1 6 0v2"/>',bell:'<path d="M6 17v-6a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"/>',img:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 9"/>',chev:'<path d="M9 6l6 6-6 6"/>',check:'<path d="M5 12l5 5 9-10"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1.1.9-1.1 1.7M12 17h.01"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',plus:'<path d="M12 5v14M5 12h14"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>'};
+const I=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+let fd={n:"",d:"",t:"",r:"1"},pv=null,impV=false,D={trips:[],pack:{},rem:[],mem:[],active:null},tab='home',memF='all',ti=0,slI=0,curT=null,sel={s:null,e:null},cm={y:new Date().getFullYear(),m:new Date().getMonth()};
+try{Object.assign(D,JSON.parse(LS.g('wf_data')||'{}'))}catch(e){}
+const CATS=['Documents','Clothes','Tech','Health','Misc'];
+const TYPES={Beach:{s:[['Clothes','Swimwear'],['Clothes','Sandals'],['Clothes','Sun hat'],['Misc','Beach towel'],['Misc','Sunglasses'],['Health','After-sun lotion']]},
+City:{s:[['Clothes','Walking shoes'],['Tech','Power bank'],['Misc','Day backpack'],['Documents','Maps and city pass'],['Misc','Reusable bag']]},
+Mountain:{s:[['Clothes','Hiking boots'],['Clothes','Warm layers'],['Clothes','Rain jacket'],['Health','First aid kit'],['Tech','Torch'],['Misc','Daypack']]},
+'Road trip':{s:[['Documents','Driving licence'],['Tech','Car charger'],['Misc','Snacks'],['Misc','Playlist and headphones'],['Tech','Offline maps'],['Misc','Blanket']]},
+Business:{s:[['Clothes','Formal outfits'],['Tech','Laptop and charger'],['Documents','Business cards'],['Misc','Notebook and pen'],['Clothes','Dress shoes']]},
+Winter:{s:[['Clothes','Warm coat'],['Clothes','Gloves and scarf'],['Clothes','Thermal layers'],['Health','Lip balm'],['Clothes','Waterproof boots']]}};
+const ESS=[['Documents','Passport or ID'],['Documents','Tickets and bookings'],['Documents','Travel insurance'],['Clothes','Underwear and socks'],['Clothes','Comfortable shoes'],['Clothes','Light jacket'],['Tech','Phone charger'],['Tech','Power adapter'],['Health','Medication'],['Health','Sunscreen'],['Misc','Cash and cards'],['Misc','Water bottle']];
+const isImp=(c,n)=>c==='Documents'||n==='Medication';
+const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return iso(d)};
+const sugs=t=>{const tp=(TYPES[t.type]||{s:[]}).s,pk=D.pack[t.id]||[];return[...tp,...ESS].filter(([c,n])=>!pk.some(i=>i.t===n))};
+const upcoming=()=>D.trips.filter(t=>t.end>=today).sort((a,b)=>a.start.localeCompare(b.start)),past=()=>D.trips.filter(t=>t.end<today).sort((a,b)=>b.end.localeCompare(a.end)),trip=()=>D.trips.find(t=>t.id===D.active)||upcoming()[0]||D.trips[0];
+const byImp=a=>a.slice().sort((x,y)=>(y.imp?1:0)-(x.imp?1:0));
+const remRow=x=>`<div class="li ${x.done?'done':''}"><button class="ck" data-a="remDone" data-v="${x.id}" aria-label="Mark done">${I('check',15)}</button><div class="t"><b>${esc(x.text)}</b><span class="sub">${fmt(x.date,{weekday:'short',day:'numeric',month:'short'})} at ${x.time}</span></div><button class="x" data-a="delRem" data-v="${x.id}" aria-label="Delete">${I('x',16)}</button></div>`;
+function holList(list){if(!list.length)return '';const row=x=>{const pk=D.pack[x.id]||[],lf=pk.filter(i=>!i.done),il=lf.filter(i=>i.imp).length,nm=byImp(lf).slice(0,3).map(i=>esc(i.t)).join(', ')+(lf.length>3?' +'+(lf.length-3)+' more':'');return `<div class="li"><button class="li" style="padding:0;border:0" data-a="pick" data-v="${x.id}"><span class="ico">${I('sun')}</span><div class="t"><b>${esc(x.name)}</b><span class="sub">${esc(x.dest||'')}${x.dest?' · ':''}${fmt(x.start)} to ${fmt(x.end)}${x.type?' · '+esc(x.type):''}</span><span class="left">${!pk.length?'No packing list yet':lf.length?`<b>${lf.length} left to pack</b>${il?` · <span class="rd">${il} important</span>`:''}: ${nm}`:'<span style="color:var(--acc);font-weight:600">All packed</span>'}</span></div></button><button class="x" data-a="delTrip" data-v="${x.id}" aria-label="Delete holiday">${I('x',16)}</button></div>`};return `<div class="list">${list.map(row).join('')}</div>`}
+const STEPS=[['sun','Welcome to Wayfare','Plan a holiday from first idea to last photo. There’s no account to create. Everything is saved privately on this device.'],['cal','Add a trip','Open Trips and choose your From and To dates, or tap them on the calendar. Name the holiday, choose its type and a reminder, then save it. Add as many trips as you like.'],['bag','Pack with confidence','Each trip has its own list. Important things show in red so you never forget them. Tick things off and watch your progress ring fill.'],['bell','Never miss a moment','Reminders are grouped by trip, with what is still left to pack right underneath.'],['img','Trips become memories','When a trip ends it moves to Memories. Swipe through its schedule, the things you took, your pictures and notes for next time.']];
+const save=()=>{if(!LS.s('wf_data',JSON.stringify(D))){toast('Storage is full. Remove a few photos.');return false}return true};
+function applyTheme(){const t=LS.g('wf_theme')||'auto',r=document.documentElement;t==='auto'?delete r.dataset.theme:r.dataset.theme=t}applyTheme();
+let tt;function toast(m){clearTimeout(tt);document.querySelectorAll('.toast').forEach(e=>e.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=m;document.body.appendChild(d);tt=setTimeout(()=>d.remove(),3200)}
+function sheet(h){closeSheet();const o=document.createElement('div');o.className='ov';o.id='ov';o.innerHTML='<div class="sheet">'+h+'</div>';o.onclick=e=>{if(e.target===o)closeSheet()};document.body.appendChild(o)}
+const closeSheet=()=>{const o=$('#ov');o&&o.remove()};
+const NAV=[['home','home','Home'],['cal','cal','Trips'],['pack','bag','Packing'],['rem','bell','Reminders'],['mem','img','Memories']];
+function upd(t){const car=t.classList.contains('car'),k=car&&t.firstElementChild?t.firstElementChild.offsetWidth+12:t.clientWidth,i=Math.max(0,Math.round(t.scrollLeft/(k||1)));if(!car)slI=i;const d=t.nextElementSibling;if(d&&d.classList.contains('sdots'))[...d.children].forEach((x,n)=>x.classList.toggle('on',n===i));const b=t.previousElementSibling;if(!car&&b&&b.classList.contains('stabs'))[...b.children].forEach((x,n)=>x.classList.toggle('on',n===i))}
+document.addEventListener('scroll',e=>{const t=e.target;if(t.classList&&(t.classList.contains('car')||t.classList.contains('sl')))upd(t)},true);
+function render(){const c=$('.car'),x=c?c.scrollLeft:0;$('#nav').innerHTML='<div>'+NAV.map(n=>`<button data-a="tab" data-v="${n[0]}" class="${tab===n[0]?'on':''}">${I(n[1],24)}${n[2]}</button>`).join('')+'</div>';$('#app').innerHTML=({home:vHome,cal:vCal,pack:vPack,rem:vRem,mem:vMem,help:vHelp})[tab]();const c2=$('.car');if(c2&&x){c2.scrollLeft=x;upd(c2)}}
+const hd=(t,s)=>`<div class="hd"><div><small>${s}</small><h1>${t}</h1></div><button class="ib" data-a="tab" data-v="help" aria-label="How to use Wayfare">${I('help',22)}</button></div>`;
+
+function ticketHtml(t,i){
+  const now=today>=t.start&&today<=t.end,d=days(today,t.start),n=now?days(today,t.end):Math.abs(d),pk=D.pack[t.id]||[],dn=pk.filter(x=>x.done).length,p=pk.length?dn/pk.length*100:0,lf=byImp(pk.filter(x=>!x.done)),il=lf.filter(x=>x.imp).length,allDone=pk.length>0&&!lf.length;
+  const lbl=now?'Happening now':i===0?'Next holiday':'Coming up';
+  const items=lf.slice(0,5).map(x=>`<div class="cl ${x.imp?'imp':''}"><button class="cb" data-a="chk" data-v="${t.id}|${x.id}" aria-label="Tick ${esc(x.t)}"></button><span>${esc(x.t)}</span>${x.imp?'<em>Important</em>':''}</div>`).join('');
+  return `<div class="ticket" data-a="pick" data-v="${t.id}" role="button" tabindex="0"><div class="tk"><span class="k">${lbl}</span><h2>${esc(t.name)}</h2><p>${esc(t.dest||'')}${t.dest?' · ':''}${fmt(t.start)} to ${fmt(t.end)}${t.type?' · '+esc(t.type):''}</p></div><div class="cut"></div><div class="stub"><div><b class="n">${n}</b><span class="u">${now?'days left':'days to go'}</span></div><div class="g"><span>${pk.length?dn+' of '+pk.length+' items packed':'Packing list is empty'}</span><div class="bar"><i style="width:${p}%"></i></div></div></div>
+  ${allDone?'<div class="clw" style="padding:10px 18px 12px"><div class="clh" style="margin:0"><span>All packed ✓</span></div></div>':`<div class="clw"><div class="clh"><span>${!pk.length?'No packing list yet':lf.length?'Left to pack · '+lf.length:'All packed'}</span>${il?`<b class="rp">${il} important</b>`:''}</div>${items}${lf.length>5?`<div class="more">+${lf.length-5} more · tap the trip to open</div>`:''}${!pk.length?'<div class="more">Tap to build your packing list</div>':''}</div>`}</div>`;
+}
+function vHome(){
+  const up=upcoming(),h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';let hero='';
+  if(up.length)hero=`<div class="car ${up.length>1?'multi':''}">${up.map(ticketHtml).join('')}</div>`+(up.length>1?`<div class="sdots">${up.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:'');
+  else hero=`<div class="list empty"><b>${past().length?'No upcoming trips':'Plan your first holiday'}</b>${past().length?'Your finished trips are in Memories.':'Add a trip with its start and end dates and your boarding pass appears here.'}<br><br><button class="btn sm" data-a="tab" data-v="cal" style="margin:auto">Add a trip</button></div>`;
+  return hd(g,new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}))+hero+
+  `<div class="tiles">${[['cal','cal','Trips'],['pack','bag','Pack'],['rem','bell','Remind'],['mem','img','Memories']].map(x=>`<button class="tile" data-a="tab" data-v="${x[0]}"><span>${I(x[1],24)}</span>${x[2]}</button>`).join('')}</div>`+
+  (D.trips.length||LS.g('wf_guide')?'':`<button class="tour-link" data-a="tab" data-v="help"><span class="ico">${I('help')}</span><span class="t"><b>New here?</b><span class="s">See how Wayfare works in one minute</span></span>${I('chev')}</button>`)+
+  `<div class="row"><h2>Your holidays</h2><button class="plus" data-a="tab" data-v="cal" aria-label="Add a trip">${I('plus',22)}</button></div>`+(up.length?holList(up)+`<p class="note">Swipe the boarding passes above, or tap a holiday to open its packing list.</p>`:`<p class="sub" style="margin:0 4px">Holidays you save appear here.</p>`);
+}
+
+function vCal(){
+  const{y,m}=cm,f=new Date(y,m,1),off=(f.getDay()+6)%7,n=new Date(y,m+1,0).getDate(),up=upcoming();
+  let c=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div class="w">${w}</div>`).join('')+'<div></div>'.repeat(off);
+  for(let i=1;i<=n;i++){const k=iso(new Date(y,m,i));let q='day';if(sel.s===k)q+=' s';if(sel.e===k)q+=' e';if(sel.s&&sel.e&&k>sel.s&&k<sel.e)q+=' in';if(k===today)q+=' today';if(D.trips.some(t=>k>=t.start&&k<=t.end))q+=' hol';c+=k<today?`<span class="${q} off">${i}</span>`:`<button class="${q}" data-a="day" data-v="${k}" aria-label="${k}">${i}</button>`}
+  const tile=(lab,k,id,act,mn)=>`<div class="rt ${act?'act':''}"><small>${lab}</small>${k?`<b>${fmt(k,{day:'numeric'})}</b><span>${fmt(k,{weekday:'short',month:'short',year:'numeric'})}</span>`:`<b>–</b><span>Select a date</span>`}<input id="${id}" type="date" min="${mn}" value="${k||''}" aria-label="${lab} date"></div>`;
+  const dn=sel.s&&sel.e?days(sel.s,sel.e):0,sm=sel.s&&sel.e?`<em>${dn+1} ${dn?'days':'day'} · ${dn} ${dn===1?'night':'nights'}</em>`:sel.s?'Now choose your last day':'Choose your first day';
+  const r=`<div class="rng"><div class="rg">${tile('From',sel.s,'rf',!sel.s,today)}<div class="rmid">${I('chev',20)}</div>${tile('To',sel.e,'ru',!!sel.s&&!sel.e,sel.s||today)}</div><div class="rsum">${sm}</div></div>`;
+  return hd('Trips','Plan a new trip')+r+
+  `<div class="cal"><div class="ch"><button data-a="mo" data-v="-1" aria-label="Previous month">‹</button><h3>${f.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</h3><button data-a="mo" data-v="1" aria-label="Next month">›</button></div><div class="grid">${c}</div><p class="sub" style="margin-top:12px">Tap your first day, then your last day. Gold dots mark days you’re already away.</p></div>`+
+  `<div class="list"><label class="f"><span>Holiday name</span><input id="tn" placeholder="Summer in Lisbon" value="${esc(fd.n)}"></label><label class="f"><span>Destination</span><input id="td" placeholder="Lisbon, Portugal" value="${esc(fd.d)}"></label><label class="f"><span>Holiday type</span><select id="tt">${Object.keys(TYPES).map(k=>`<option ${fd.t===k?'selected':''}>${k}</option>`).join('')}</select></label><label class="f"><span>Remind me to pack</span><select id="tr">${[['','No reminder'],['1','1 day before'],['3','3 days before'],['7','1 week before']].map(([v,l])=>`<option value="${v}" ${fd.r===v?'selected':''}>${l}</option>`).join('')}</select></label></div><button class="btn" data-a="saveTrip">Save trip</button>`+(up.length?`<h2>Upcoming trips</h2>`+holList(up):'');
+}
+
+function packCard(t){
+  const pk=D.pack[t.id]||[],dn=pk.filter(i=>i.done).length,lf=pk.filter(i=>!i.done),il=lf.filter(i=>i.imp).length,p=pk.length?dn/pk.length*100:0,dd=days(today,t.start),when=today>=t.start?'Happening now':dd===0?'Starts today':dd===1?'Starts tomorrow':'In '+dd+' days',all=pk.length>0&&!lf.length;
+  return `<div class="pc ${all?'ok':''}"><button class="pch" data-a="pick" data-v="${t.id}"><span class="t"><b>${esc(t.name)}</b><span class="sub">${esc(t.dest||'')}${t.dest?' · ':''}${fmt(t.start)} to ${fmt(t.end)} · ${when}</span></span>${I('chev')}</button>`+
+  (pk.length?`<div class="pcs"><span><b>${dn}</b> of <b>${pk.length}</b> packed</span>${all?'<span style="color:var(--acc);font-weight:700">All packed ✓</span>':il?`<span class="rd">${il} important left</span>`:`<span>${lf.length} left</span>`}</div><div class="pbar"><i style="width:${p}%"></i></div>`:`<div class="pcs"><span>Nothing in the bag yet</span></div>`)+
+  `<div class="pca"><button class="btn soft sm" data-a="addTo" data-v="${t.id}">${I('plus',14)} Add item</button></div></div>`;
+}
+function vPack(){
+  const t=pv&&D.trips.find(x=>x.id===pv);
+  if(!t){
+    const up=upcoming();
+    return hd('Packing','Trip by trip')+(up.length?up.map(packCard).join('')+`<p class="note">Tap a trip to see its full list.</p>`:`<div class="list empty"><b>Add a trip first</b>Your packing list belongs to a trip.<br><br><button class="btn sm" data-a="tab" data-v="cal" style="margin:auto">Add a trip</button></div>`);
+  }
+  const pk=D.pack[t.id]||[],dn=pk.filter(i=>i.done).length,p=pk.length?Math.round(dn/pk.length*100):0,sg=sugs(t),ilf=pk.filter(i=>i.imp&&!i.done).length;
+  const row=i=>`<div class="li ${i.imp?'imp':''} ${i.done?'done':''}"><button class="ck" data-a="chk" data-v="${t.id}|${i.id}" aria-label="Toggle ${esc(i.t)}">${I('check',15)}</button><span class="t">${esc(i.t)}${i.imp?'<em class="im">Important</em>':''}</span><button class="x" data-a="star" data-v="${i.id}" aria-label="Mark important" style="${i.imp?'color:var(--red)':''}">${I('star',16)}</button><button class="x" data-a="delItem" data-v="${i.id}" aria-label="Remove">${I('x',16)}</button></div>`;
+  const grp=arr=>CATS.map(c=>{const it=arr.filter(i=>i.c===c);return it.length?`<div class="cat">${c}</div>`+it.map(row).join(''):''}).join('');
+  const im=pk.filter(i=>i.imp),ot=pk.filter(i=>!i.imp);
+  return hd('Packing',esc(t.name)+(t.type?' · '+esc(t.type):''))+
+  `<button class="bk" data-a="packBack">${I('chev',16)} All trips</button>`+
+  `<div class="prog"><div class="ring" style="--p:${p}"><span>${p}%</span></div><div><b>${dn} of ${pk.length} packed</b><p class="sub">${pk.length-dn?(pk.length-dn)+' left to pack':pk.length?'Everything is packed':'Add items to begin'}${ilf?` · <span class="rd">${ilf} important left</span>`:''}</p></div></div>`+
+  (sg.length?`<div class="row"><h2 style="margin-top:6px">Suggested${t.type?' for '+esc(t.type.toLowerCase()):''}</h2><button class="btn soft sm" data-a="ess">Add all</button></div><div class="sg">${sg.map(([c,n])=>`<button class="${isImp(c,n)?'imp':''}" data-a="sug" data-v="${c}|${n}">${I('plus',14)}${n}</button>`).join('')}</div>`:'')+
+  `<div class="row"><h2>Your list</h2><button class="plus" data-a="newItem" aria-label="Add an item">${I('plus',22)}</button></div>`+
+  (pk.length?`<div class="legend"><span><i class="r"></i>Important</span><span><i></i>Other things</span></div>`+
+    (im.length?`<div class="secH red">Important · ${ilf} left</div><div class="list">${grp(im)}</div>`:'')+
+    (ot.length?`<div class="secH">Other things · ${ot.filter(i=>!i.done).length} left</div><div class="list">${grp(ot)}</div>`:''):
+    `<div class="empty"><b>Nothing to pack yet</b>Tap a suggestion above, or the + button to add your own.</div>`);
+}
+
+function vRem(){
+  const perm='Notification' in window?Notification.permission:'denied',up=upcoming(),srt=a=>a.slice().sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
+  const dflt=D.active&&up.some(t=>t.id===D.active)?D.active:(up[0]||{}).id||'';
+  const secs=up.map(t=>{
+    const rs=srt(D.rem.filter(r=>r.trip===t.id)),pk=D.pack[t.id]||[],lf=byImp(pk.filter(i=>!i.done)),il=lf.filter(i=>i.imp).length;
+    if(!rs.length&&!pk.length)return '';
+    const dd=days(today,t.start),when=today>=t.start?'happening now':dd===0?'starts today':dd===1?'starts tomorrow':'in '+dd+' days';
+    const chips=lf.slice(0,10).map(i=>`<button class="chp ${i.imp?'imp':''}" data-a="chk" data-v="${t.id}|${i.id}">${I('check',13)}${esc(i.t)}</button>`).join('')+(lf.length>10?`<button class="chp mut" data-a="pick" data-v="${t.id}">+${lf.length-10} more</button>`:'');
+    return `<div class="tg"><div class="th"><div><b>${esc(t.name)}</b><span class="sub">${fmt(t.start)} to ${fmt(t.end)} · ${when}</span></div><button class="btn soft sm" data-a="pick" data-v="${t.id}">Packing</button></div>`+
+    (rs.length?`<div class="list">${rs.map(remRow).join('')}</div>`:'')+
+    (pk.length?`<div class="pk"><div class="pkh">${lf.length?'Still to pack · '+lf.length:'Everything is packed'}${il?` · <span class="rd">${il} important</span>`:''}</div>${lf.length?`<div class="cw">${chips}</div>`:''}</div>`:'')+`</div>`}).join('');
+  const gen=srt(D.rem.filter(r=>!r.trip||!D.trips.some(t=>t.id===r.trip)));
+  return hd('Reminders','By trip')+`<div class="list"><label class="f"><span>Reminder</span><input id="rt" placeholder="Check in online"></label><label class="f"><span>Trip</span><select id="rtr"><option value="">General</option>${up.map(t=>`<option value="${t.id}" ${t.id===dflt?'selected':''}>${esc(t.name)}</option>`).join('')}</select></label><label class="f"><span>Date</span><input id="rd" type="date" value="${today}"></label><label class="f"><span>Time</span><input id="rh" type="time" value="09:00"></label></div><button class="btn" data-a="addRem">Add reminder</button><div style="height:14px"></div>`+
+  (perm==='default'?`<button class="btn soft" data-a="notif" style="margin-bottom:14px">Turn on phone notifications</button>`:'')+
+  (secs||gen.length?secs+(gen.length?`<div class="th"><div><b>General</b></div></div><div class="list">${gen.map(remRow).join('')}</div>`:''):`<div class="empty"><b>No reminders</b>Add one and Wayfare alerts you when it’s due.</div>`);
+}
+
+const memCards=arr=>`<div class="mem">${arr.map(m=>`<button data-a="openMem" data-v="${m.id}"><img src="${m.img}" alt="${esc(m.title)}"><span>${esc(m.title)}<br>${fmt(m.date,{month:'short',year:'numeric'})}</span></button>`).join('')}</div>`;
+function vMem(){
+  const ps=past(),yr=[...new Set(ps.map(t=>t.end.slice(0,4)))],L=ps.filter(t=>memF==='all'||t.end.startsWith(memF)),oth=D.mem.filter(m=>!m.trip||!D.trips.some(t=>t.id===m.trip)).sort((a,b)=>b.date.localeCompare(a.date));
+  const cards=L.map(t=>{const pk=D.pack[t.id]||[],tk=pk.filter(i=>i.done).length,ph=D.mem.filter(m=>m.trip===t.id).sort((a,b)=>b.date.localeCompare(a.date));return `<button class="mc" data-a="openT" data-v="${t.id}"><span class="cov">${ph[0]?`<img src="${ph[0].img}" alt="">`:I('sun',26)}</span><span class="t"><b>${esc(t.name)}</b><span class="sub">${esc(t.dest||'')}${t.dest?' · ':''}${fmt(t.start)} to ${fmt(t.end,{day:'numeric',month:'short',year:'numeric'})}</span><span class="mm"><span>${tk} taken</span><span>${ph.length} photo${ph.length===1?'':'s'}</span>${(t.notes||[]).length?`<span>${t.notes.length} note${t.notes.length===1?'':'s'}</span>`:''}</span></span>${I('chev')}</button>`}).join('');
+  return hd('Memories','Trip by trip')+`<button class="btn" data-a="addPast" style="margin-bottom:10px">Add a past trip</button><button class="btn soft" data-a="addMem" data-v="" style="margin-bottom:14px">Add a photo</button>`+
+  (yr.length>1?`<div class="chips"><button class="chip ${memF==='all'?'on':''}" data-a="mf" data-v="all">All</button>${yr.map(y=>`<button class="chip ${memF===y?'on':''}" data-a="mf" data-v="${y}">${y}</button>`).join('')}</div>`:'')+
+  (cards||(!oth.length?`<div class="list empty"><b>No finished trips yet</b>Trips move here automatically once they end. You can also add a past trip.</div>`:''))+
+  (cards?`<p class="note" style="margin:-2px 0 14px">Trips move here automatically once they end.</p>`:'')+
+  (oth.length?`<div class="secH">Other photos</div>`+memCards(oth):'');
+}
+
+function vHelp(){
+  const th=LS.g('wf_theme')||'auto',G=[['cal','1. Save a trip','Go to Trips. Choose your From and To dates on the dates card, or tap your first and last day on the calendar. Add a name, destination and holiday type, pick a reminder if you want one, then tap Save trip. Repeat for every trip.'],['home','2. Swipe your trips','Home shows a boarding pass for each upcoming trip. Swipe sideways to see the next one. Each pass lists what is left to pack, with important things in red. Tap a trip to open its packing list.'],['bag','3. Pack trip by trip','Open Packing to see every trip with how many things are packed. Tap Add item on a trip, or open it for the full list. Mark things as Important to see them in red. Tap the circle to tick them off.'],['bell','4. Reminders by trip','Reminders are grouped under each trip, with what is still left to pack below them. Pick a trip when you add one.'],['img','5. Trips become memories','Once a trip ends it moves to Memories. Open it and swipe through the schedule, the things you took, your pictures and your notes. Use Notes to write what to remember next time and any important points. You can also add a past trip yourself.']];
+  return `<div class="hd"><div><small>How Wayfare works</small><h1>Guide</h1></div><button class="ib" data-a="tab" data-v="home" aria-label="Close guide">${I('x',20)}</button></div>
+  <div class="list">${G.map(x=>`<div class="li" style="align-items:flex-start"><span class="ico">${I(x[0])}</span><div class="t"><b>${x[1]}</b><span class="sub">${x[2]}</span></div></div>`).join('')}</div>
+  <h2>Good to know</h2><div class="list"><div class="li"><div class="t"><b>Gold dots on the calendar</b><span class="sub">They mark days you’re already away.</span></div></div><div class="li"><div class="t"><b>Red means important</b><span class="sub">Important things show in red everywhere, so you can spot them quickly.</span></div></div><div class="li"><div class="t"><b>Reminders need the app open</b><span class="sub">Turn on phone notifications on the Reminders tab if your browser allows it.</span></div></div><div class="li"><div class="t"><b>Add it to your home screen</b><span class="sub">Use your browser’s share or menu button and choose Add to Home Screen.</span></div></div></div>
+  <button class="btn" data-a="tour">Replay the welcome tour</button>
+  <h2>Appearance</h2><div class="seg">${['auto','light','dark'].map(x=>`<button class="${th===x?'on':''}" data-a="th" data-v="${x}">${x[0].toUpperCase()+x.slice(1)}</button>`).join('')}</div>
+  <div style="height:18px"></div><button class="btn red" data-a="wipe">Erase all my data</button><p class="note">Your holidays, lists and photos are saved in this browser on this device only. Clearing your browser data removes them.</p>`;
+}
+
+function tour(){
+  const o=$('#tour');o&&o.remove();const s=STEPS[ti],last=ti===STEPS.length-1,d=document.createElement('div');d.className='tour';d.id='tour';
+  d.innerHTML=`<button class="sk" data-a="skip">${last?'':'Skip'}</button><div class="mid"><div class="ic">${I(s[0],48)}</div><h2>${s[1]}</h2><p>${s[2]}</p></div><div class="dots">${STEPS.map((_,i)=>`<i class="${i===ti?'on':''}"></i>`).join('')}</div><button class="btn" data-a="next">${last?'Start planning':'Next'}</button>`;
+  document.body.appendChild(d);
+}
+function shrink(f){return new Promise((ok,no)=>{const r=new FileReader();r.onerror=no;r.onload=()=>{const i=new Image();i.onerror=no;i.onload=()=>{const k=Math.min(1,800/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.7))};i.src=r.result};r.readAsDataURL(f)})}
+const A={
+tab(v){if(v==='help')LS.s('wf_guide','1');if(v==='pack')pv=null;tab=v;render();scrollTo(0,0)},th(v){LS.s('wf_theme',v);applyTheme();render()},
+tour(){ti=0;tab='home';render();tour()},next(){if(ti<STEPS.length-1){ti++;tour()}else A.skip()},
+skip(){LS.s('wf_seen','1');const o=$('#tour');o&&o.remove();ti=0;tab='home';render()},
+wipe(){if(!confirm('Erase all holidays, lists, reminders and photos from this device?'))return;D={trips:[],pack:{},rem:[],mem:[],active:null};LS.d('wf_data');tab='home';render();toast('All data erased')},
+pick(v){closeSheet();D.active=v;pv=v;save();tab='pack';render();scrollTo(0,0)},
+delTrip(v){if(!confirm('Delete this trip, its packing list, reminders and photos?'))return;D.trips=D.trips.filter(t=>t.id!==v);delete D.pack[v];D.rem=D.rem.filter(r=>r.trip!==v);D.mem=D.mem.filter(m=>m.trip!==v);if(D.active===v)D.active=null;if(pv===v)pv=null;save();closeSheet();render()},
+packBack(){pv=null;render();scrollTo(0,0)},
+addTo(v){D.active=v;A.newItem()},
+mo(v){cm.m+=+v;if(cm.m<0){cm.m=11;cm.y--}if(cm.m>11){cm.m=0;cm.y++}render()},
+day(v){if(!sel.s||sel.e||v<sel.s)sel={s:v,e:null};else sel.e=v;render()},
+saveTrip(){if(!sel.s)return toast('Choose your first and last day');const s=sel.s,e=sel.e||sel.s;if(s<today)return toast('Start date can’t be in the past');const n=$('#tn').value.trim()||'My holiday',t={id:uid(),name:n,dest:$('#td').value.trim(),type:$('#tt').value,start:s,end:e},b=+$('#tr').value;D.trips.push(t);D.active=t.id;pv=null;if(b){let d=addD(t.start,-b);if(d<today)d=today;D.rem.push({id:uid(),trip:t.id,text:n+' starts in '+b+(b===1?' day':' days')+'. Finish packing.',date:d,time:'09:00',done:false,fired:false})}sel={s:null,e:null};fd={n:'',d:'',t:'',r:'1'};save();tab='pack';render();scrollTo(0,0);toast('Trip saved'+(b?' with a reminder':'')+'. Add what you are taking.')},
+newItem(){impV=false;sheet(`<h2 style="margin-top:4px">Add to packing list</h2><div class="list"><label class="f"><span>Item</span><input id="pi" placeholder="Sunglasses"></label><label class="f"><span>Category</span><select id="pc">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></label></div><div class="seg" style="margin-bottom:14px"><button class="on" data-a="imp" data-v="0">Normal</button><button data-a="imp" data-v="1">Important</button></div><button class="btn" data-a="addItem">Add item</button>`);setTimeout(()=>{const e=$('#pi');e&&e.focus()},60)},
+imp(v){impV=v==='1';document.querySelectorAll('#ov .seg button').forEach(b=>{const on=b.dataset.v===v;b.classList.toggle('on',on);b.classList.toggle('red',on&&v==='1')})},
+addItem(){const t=$('#pi').value.trim(),tr=trip(),pk=D.pack[tr.id]=D.pack[tr.id]||[];if(!t)return toast('Type an item first');pk.push({id:uid(),t,c:$('#pc').value,done:false,imp:impV});save();closeSheet();render();toast('Added to your list')},
+sug(v){const[c,t]=v.split('|'),tr=trip(),pk=D.pack[tr.id]=D.pack[tr.id]||[];if(pk.some(i=>i.t===t))return;pk.push({id:uid(),t,c,done:false,imp:isImp(c,t)});save();render()},
+star(v){const i=D.pack[trip().id].find(i=>i.id===v);i.imp=!i.imp;save();render()},
+ess(){const tr=trip(),pk=D.pack[tr.id]=D.pack[tr.id]||[];sugs(tr).forEach(([c,t])=>pk.push({id:uid(),t,c,done:false,imp:isImp(c,t)}));save();render()},
+chk(v){const[tid,id]=v.split('|'),i=(D.pack[tid]||[]).find(i=>i.id===id);if(!i)return;i.done=!i.done;save();render()},
+delItem(v){if(!confirm('Remove this item from your packing list?'))return;const tr=trip();D.pack[tr.id]=D.pack[tr.id].filter(i=>i.id!==v);save();render();toast('Item removed')},
+addRem(){const t=$('#rt').value.trim();if(!t)return toast('Write your reminder first');D.rem.push({id:uid(),trip:$('#rtr').value,text:t,date:$('#rd').value||today,time:$('#rh').value||'09:00',done:false,fired:false});save();render();toast('Reminder added')},
+remDone(v){const r=D.rem.find(r=>r.id===v);r.done=!r.done;save();render()},delRem(v){if(!confirm('Delete this reminder?'))return;D.rem=D.rem.filter(r=>r.id!==v);save();render();toast('Reminder deleted')},
+async notif(){try{await Notification.requestPermission()}catch(e){}render()},
+mf(v){memF=v;render()},
+slide(v){const s=$('#ov .sl');s&&s.scrollTo({left:s.clientWidth*(+v),behavior:'smooth'})},
+openT(v){slI=0;A.openTrip(v)},
+openTrip(v){
+  const t=D.trips.find(x=>x.id===v);if(!t)return;curT=v;
+  const pk=D.pack[v]||[],taken=pk.filter(i=>i.done),left=pk.filter(i=>!i.done),ph=D.mem.filter(m=>m.trip===v).sort((a,b)=>b.date.localeCompare(a.date)),rm=D.rem.filter(r=>r.trip===v).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)),dur=days(t.start,t.end)+1;
+  let dl='';for(let k=0;k<Math.min(dur,45);k++){const dt=addD(t.start,k),rs=rm.filter(r=>r.date===dt);dl+=`<div class="li"><span class="ico" style="font-size:13px;font-weight:700">${k+1}</span><div class="t"><b>${fmt(dt,{weekday:'long',day:'numeric',month:'short'})}</b>${rs.length?rs.map(r=>`<span class="sub">${r.time} · ${esc(r.text)}</span>`).join(''):'<span class="sub">Free day</span>'}</div></div>`}
+  const oth=rm.filter(r=>r.date<t.start||r.date>t.end);
+  const s1=`<div class="slide"><div class="sum"><div><b>${dur}</b><span>days</span></div><div><b>${taken.length}</b><span>taken</span></div><div><b>${ph.length}</b><span>photos</span></div></div><div class="list"><div class="li"><span class="ico">${I('cal')}</span><div class="t"><b>${fmt(t.start,{day:'numeric',month:'short'})} to ${fmt(t.end,{day:'numeric',month:'short',year:'numeric'})}</b><span class="sub">${esc(t.dest||'No destination')}${t.type?' · '+esc(t.type):''}</span></div></div></div><div class="secH">Day by day</div><div class="list">${dl}</div>${oth.length?`<div class="secH">Other reminders</div><div class="list">${oth.map(r=>`<div class="li"><div class="t"><b>${esc(r.text)}</b><span class="sub">${fmt(r.date)} at ${r.time}</span></div></div>`).join('')}</div>`:''}</div>`;
+  const nts=t.notes||[],nx=nts.filter(n=>n.k==='next'),ni=nts.filter(n=>n.k==='imp'),nrow=n=>`<div class="li ${n.k==='imp'?'imp':''}"><span class="t">${esc(n.text)}</span><button class="x" data-a="delNote" data-v="${n.id}" aria-label="Delete note">${I('x',16)}</button></div>`;
+  const s4=`<div class="slide">${nx.length?`<div class="secH">Remember next time · ${nx.length}</div><div class="list">${nx.map(nrow).join('')}</div>`:''}${ni.length?`<div class="secH red">Important points · ${ni.length}</div><div class="list">${ni.map(nrow).join('')}</div>`:''}${!nts.length?`<div class="empty"><b>No notes yet</b>Write what to remember next time, or an important point about this trip.</div>`:''}<div class="list"><label class="f"><span>Write a note</span><textarea id="nt" rows="3" placeholder="Book the ferry earlier"></textarea></label><label class="f"><span>Type</span><select id="nk"><option value="next">Remember next time</option><option value="imp">Important point</option></select></label></div><button class="btn soft" data-a="addNote">Add note</button></div>`;
+  const trow=i=>`<div class="li ${i.imp?'imp':''}"><span class="ck fill">${I('check',15)}</span><span class="t">${esc(i.t)} <span class="sub">· ${i.c}</span></span></div>`;
+  const ti2=taken.filter(i=>i.imp),to=taken.filter(i=>!i.imp);
+  const s2=`<div class="slide">${taken.length?(ti2.length?`<div class="secH red">Important · ${ti2.length}</div><div class="list">${ti2.map(trow).join('')}</div>`:'')+(to.length?`<div class="secH">Other things · ${to.length}</div><div class="list">${to.map(trow).join('')}</div>`:''):`<div class="empty"><b>Nothing ticked</b>Things you tick off in Packing show here. You can add some below.</div>`}${left.length?`<div class="secH">Not ticked</div><div class="cw" style="margin-bottom:12px">${byImp(left).map(i=>`<span class="chp mut ${i.imp?'imp':''}">${esc(i.t)}</span>`).join('')}</div>`:''}<div class="list"><label class="f"><span>Add something you took</span><input id="tk" placeholder="Camera"></label><label class="f"><span>Type</span><select id="tki"><option value="0">Other thing</option><option value="1">Important</option></select></label></div><button class="btn soft" data-a="addTaken">Add to things taken</button></div>`;
+  const s3=`<div class="slide">${ph.length?memCards(ph):`<div class="empty"><b>No pictures yet</b>Add photos from this trip.</div>`}<button class="btn" data-a="addMem" data-v="${v}">Add a photo</button></div>`;
+  sheet(`<div class="mh"><div><span class="sub">${esc(t.dest||'')}</span><h2 style="margin:2px 0 0">${esc(t.name)}</h2></div><button class="x" data-a="close" aria-label="Close">${I('x',20)}</button></div><div class="seg stabs">${['Schedule','Things taken','Pictures','Notes'].map((n,i)=>`<button class="${i===slI?'on':''}" data-a="slide" data-v="${i}">${n}</button>`).join('')}</div><div class="sl">${s1}${s2}${s3}${s4}</div><div class="sdots">${[0,1,2,3].map(i=>`<i class="${i===slI?'on':''}"></i>`).join('')}</div><button class="btn red" data-a="delTrip" data-v="${v}" style="margin-top:10px">Delete this trip</button>`);
+  const sl=$('#ov .sl');if(sl)sl.scrollLeft=slI*sl.clientWidth;
+},
+addNote(){const v=curT,t=D.trips.find(x=>x.id===v),x=$('#nt').value.trim();if(!x)return toast('Write your note first');(t.notes=t.notes||[]).push({id:uid(),k:$('#nk').value,text:x});save();render();slI=3;A.openTrip(v)},
+delNote(v){if(!confirm('Delete this note?'))return;const t=D.trips.find(x=>x.id===curT);if(!t)return;t.notes=(t.notes||[]).filter(n=>n.id!==v);save();render();slI=3;A.openTrip(curT)},
+addTaken(){const v=curT,n=$('#tk').value.trim();if(!n)return toast('Type an item first');const pk=D.pack[v]=D.pack[v]||[];pk.push({id:uid(),t:n,c:'Misc',done:true,imp:$('#tki').value==='1'});save();render();slI=1;A.openTrip(v)},
+addPast(){const y=addD(today,-1);sheet(`<h2 style="margin-top:4px">Add a past trip</h2><div class="list"><label class="f"><span>Trip name</span><input id="pn" placeholder="Goa with friends"></label><label class="f"><span>Destination</span><input id="pdst" placeholder="Goa, India"></label><label class="f"><span>Holiday type</span><select id="pty">${Object.keys(TYPES).map(k=>`<option>${k}</option>`).join('')}</select></label><label class="f"><span>First day</span><input id="ps" type="date" max="${y}" value="${addD(today,-7)}"></label><label class="f"><span>Last day</span><input id="pe" type="date" max="${y}" value="${addD(today,-3)}"></label></div><button class="btn" data-a="savePast">Save trip</button>`)},
+savePast(){const s=$('#ps').value,e=$('#pe').value;if(!s||!e||e<s)return toast('Check your dates');if(e>=today)return toast('A past trip must end before today');const t={id:uid(),name:$('#pn').value.trim()||'Past trip',dest:$('#pdst').value.trim(),type:$('#pty').value,start:s,end:e};D.trips.push(t);D.pack[t.id]=[];save();render();A.openT(t.id)},
+addMem(v){const ps=past(),def=v||(ps[0]||{}).id||'',all=[...ps,...upcoming()];sheet(`<h2 style="margin-top:4px">New memory</h2><div class="list"><label class="f"><span>Trip</span><select id="mtr"><option value="">No trip</option>${all.map(t=>`<option value="${t.id}" ${t.id===def?'selected':''}>${esc(t.name)}</option>`).join('')}</select></label><label class="f"><span>Photo</span><input id="mp" type="file" accept="image/*"></label><label class="f"><span>Title</span><input id="mt" placeholder="Sunset in Santorini"></label><label class="f"><span>Date</span><input id="md" type="date" value="${today}"></label><label class="f"><span>Note</span><textarea id="mn" rows="3" placeholder="What do you want to remember?"></textarea></label></div><button class="btn" data-a="saveMem">Save memory</button><button class="btn soft" data-a="back" data-v="${v||''}" style="margin-top:10px">Cancel</button>`)},
+async saveMem(){const f=$('#mp').files[0];if(!f)return toast('Choose a photo first');try{const tr=$('#mtr').value;D.mem.push({id:uid(),trip:tr,img:await shrink(f),title:$('#mt').value.trim()||'Untitled',date:$('#md').value||today,note:$('#mn').value.trim()});if(save()){render();toast('Memory saved');if(tr){slI=2;A.openTrip(tr)}else closeSheet()}else D.mem.pop()}catch(e){toast('That photo could not be read. Try another one.')}},
+back(v){if(v){slI=2;A.openTrip(v)}else closeSheet()},
+openMem(v){const m=D.mem.find(m=>m.id===v);sheet(`<img src="${m.img}" alt="${esc(m.title)}"><h2 style="margin:0">${esc(m.title)}</h2><p class="sub">${fmt(m.date,{day:'numeric',month:'long',year:'numeric'})}</p><p style="margin:10px 0 16px">${esc(m.note)}</p><div style="display:flex;gap:10px"><button class="btn soft" data-a="back" data-v="${m.trip||''}">Close</button><button class="btn red" data-a="delMem" data-v="${m.id}">Delete</button></div>`)},
+close(){closeSheet()},delMem(v){if(!confirm('Delete this photo and its memory details?'))return;const m=D.mem.find(x=>x.id===v);D.mem=D.mem.filter(x=>x.id!==v);save();render();A.back(m&&m.trip);toast('Memory deleted')}
+};
+document.addEventListener('change',e=>{const i=e.target.id,v=e.target.value;if(i==='rf'&&v){sel={s:v,e:sel.e&&sel.e>=v?sel.e:null};const d=pd(v);cm={y:d.getFullYear(),m:d.getMonth()};render()}else if(i==='ru'&&v){if(!sel.s){toast('Choose the From date first');render();return}if(v<sel.s)sel={s:v,e:null};else sel.e=v;const d=pd(v);cm={y:d.getFullYear(),m:d.getMonth()};render()}});
+document.addEventListener('input',e=>{const i=e.target.id,v=e.target.value;if(i==='tn')fd.n=v;else if(i==='td')fd.d=v;else if(i==='tt')fd.t=v;else if(i==='tr')fd.r=v});
+document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(a&&A[a.dataset.a])A[a.dataset.a](a.dataset.v,e)});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('ticket'))A.pick(e.target.dataset.v)});
+setInterval(()=>{let h=0;D.rem.forEach(r=>{if(!r.done&&!r.fired&&new Date(r.date+'T'+r.time)<=new Date()){r.fired=h=true;toast('Reminder: '+r.text);try{if(Notification.permission==='granted')new Notification('Wayfare',{body:r.text})}catch(e){}}});if(h){save();if(tab==='rem')render()}},20000);
+render();if(!LS.g('wf_seen'))tour();
+</script>
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.warn('Wayfare offline setup could not be registered:', err);
+    });
+  });
+}
+</script>
+</body></html>
